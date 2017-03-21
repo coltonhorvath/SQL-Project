@@ -1,0 +1,63 @@
+/*The following examples are from a single form (Customer Form). 
+To avoid excessive reiteration, this will not include the other forms 
+because the only difference is a change in variables. Some are in VB, some are SQL.*/
+
+/*INSERT*/
+CurrentDb.Execute "INSERT INTO Customer(CustomerNum, CustomerName, Street, City, State, PostalCode, Balance, TechNum) " & _
+            " VALUES(" & Me.txtCnum & ",
+			'" & Me.txtCname & "',
+			'" & Me.txtStreet & "',
+			'" & Me.txtCity & "',
+			'" & Me.txtState & "',
+			'" & Me.txtPostal & "',
+			'" & Me.txtBalance & "',
+			'" & Me.txtTnum & "') "
+			
+			
+/*UPDATE*/
+CurrentDb.Execute "UPDATE Customer " & _
+            " SET CustomerNum=" & Me.txtCnum & _
+            ", CustomerName='" & Me.txtCname & "'" & _
+            ", Street='" & Me.txtStreet & "'" & _
+            ", City='" & Me.txtCity & "'" & _
+            ", State='" & Me.txtState & "'" & _
+            ", PostalCode='" & Me.txtPostal & "'" & _
+            ", Balance='" & Me.txtBalance & "'" & _
+            ", TechNum='" & Me.txtTnum & "'" & _
+            " WHERE CustomerNum=" & Me.txtCnum.Tag
+			
+			
+/*DELETE*/
+Private Sub btnDelete_Click()
+    If Not (Me.Customer_Subform.Form.Recordset.EOF And Me.Customer_Subform.Form.Recordset.EOF) Then
+        If MsgBox("Are you sure you want to delete?", vbYesNo) = vbYes Then
+            CurrentDb.Execute "DELETE FROM Customer " & _
+                " WHERE CustomerNum=" & Me.Customer_Subform.Form.Recordset.Fields("CustomerNum")
+            Me.Customer_Subform.Form.Requery
+        End If
+    End If
+End Sub
+
+
+/*EDIT*/
+Private Sub btnEdit_Click()
+    If Not (Me.Customer_Subform.Form.Recordset.EOF And Me.Customer_Subform.Form.Recordset.BOF) Then
+        With Me.Customer_Subform.Form.Recordset
+            Me.txtCnum = .Fields("CustomerNum")
+            Me.txtCname = .Fields("CustomerName")
+            Me.txtStreet = .Fields("Street")
+            Me.txtCity = .Fields("City")
+            Me.txtState = .Fields("State")
+            Me.txtPostal = .Fields("PostalCode")
+            Me.txtBalance = .Fields("Balance")
+            Me.txtTnum = .Fields("TechNum")
+            'store customer number in Tag of txtCnum in case id is modified
+            Me.txtCnum.Tag = .Fields("CustomerNum")
+            'change caption of add to update
+            Me.btnAdd.Caption = "Update"
+            'disable button edit
+            Me.btnEdit.Enabled = False
+        End With
+    End If
+    
+End Sub
